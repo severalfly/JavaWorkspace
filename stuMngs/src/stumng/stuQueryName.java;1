@@ -1,0 +1,136 @@
+ package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+
+public class stuQueryName extends JFrame {
+  DBConnManager dbconnmanager = new DBConnManager();
+  BorderLayout borderLayout1 = new BorderLayout();
+  JPanel jPanel1 = new JPanel();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JScrollPane jScrollPane1 = new JScrollPane();
+  JTable jTable1 = new JTable();
+  JComboBox jComboBox1 = new JComboBox();
+  JButton jButton1 = new JButton();
+  JButton jButton2 = new JButton();
+
+  private String aclass="";
+  private String aname="";
+
+  public stuQueryName() {
+    try {
+      jbInit();
+      //设置frame的大小
+      this.setSize(600, 400);
+      //得到当前屏幕大小
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      //得到frame的大小
+      Dimension frameSize = this.getSize();
+      if (frameSize.height > screenSize.height) {
+        frameSize.height = screenSize.height;
+      }
+      if (frameSize.width > screenSize.width) {
+        frameSize.width = screenSize.width;
+      }
+      this.setTitle("查询学生信息");
+      //设置frame在屏幕上显示的位置
+      this.setLocation( (screenSize.width - frameSize.width) / 2,
+                       (screenSize.height - frameSize.height) / 2);
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+
+    //按学号查询该学生的基本信息
+    jButton1.addActionListener(new ActionListener()
+   {
+     public void actionPerformed(ActionEvent e)
+     {
+       Vector result = new Vector();
+       Vector resultdate = new Vector();
+       Vector headline = new Vector();
+       headline.add("stu_id");
+       headline.add("name");
+       headline.add("class");
+       headline.add("sex");
+       headline.add("birthday");
+       headline.add("ethnic");
+       headline.add("nativeplace");
+
+       jTable1 = new JTable();
+       jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //滚动条设置左右滚
+       jScrollPane1.getViewport().add(jTable1, null); //在滚动条中放入表
+
+       aname = jTextField1.getText();
+       if (aname.equals("")) JOptionPane.showMessageDialog(null, "请输入姓名");
+       else{
+         aclass = (String) jComboBox1.getSelectedItem();
+         result = dbconnmanager.stuinfQuery(0, aclass, aname);
+         if (result.size() == 0) JOptionPane.showMessageDialog(null, "无记录");
+         else {
+           for (int i = 0; i < result.size() / 7; i++) {
+             Vector temp = new Vector();
+             for (int j = 0; j <= 6; j++) {
+               String str = (String) result.elementAt(j + i * 7);
+               temp.add(str);
+             }
+             resultdate.add(temp);
+           }
+           jTable1 = new JTable(resultdate, headline);
+           jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //滚动条设置左右滚
+           jScrollPane1.getViewport().add(jTable1, null); //在滚动条中放入表
+
+         }
+       }
+     }
+   });
+
+    //退出frame
+    jButton2.addActionListener(new ActionListener()
+   {
+     public void actionPerformed(ActionEvent e)
+     {
+       jButton2_actionPerformed(e);
+     }
+   });
+
+  }
+
+  void jbInit() throws Exception {
+    this.getContentPane().setLayout(borderLayout1);
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("请输入姓名");
+    jTextField1.setOpaque(false);
+    jTextField1.setPreferredSize(new Dimension(100, 21));
+    jTextField1.setSelectionStart(21);
+    jTextField1.setText("");
+    jButton1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton1.setText("提交");
+    jButton2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton2.setText("退出");
+    jComboBox1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jComboBox1.addItem("A2241");
+    jComboBox1.addItem("A2242");
+    jComboBox1.addItem("A2243");
+    jComboBox1.addItem("全校");
+    this.getContentPane().add(jPanel1, BorderLayout.NORTH);
+    jPanel1.add(jLabel1, null);
+    jPanel1.add(jTextField1, null);
+    jPanel1.add(jComboBox1, null);
+    jPanel1.add(jButton1, null);
+    jPanel1.add(jButton2, null);
+    this.getContentPane().add(jScrollPane1, BorderLayout.CENTER);
+  }
+  void jButton2_actionPerformed(ActionEvent e)
+  {
+    jTable1 = new JTable();
+    jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //滚动条设置左右滚
+    jScrollPane1.getViewport().add(jTable1, null); //在滚动条中放入表
+
+    this.dispose();
+    dbconnmanager.closeConns();
+  }
+}

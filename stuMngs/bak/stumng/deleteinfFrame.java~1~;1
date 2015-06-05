@@ -1,0 +1,51 @@
+package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+import com.borland.jbcl.layout.*;
+
+public class deleteinfFrame extends JFrame {
+  BorderLayout borderLayout1 = new BorderLayout();
+  JPanel jPanel1 = new JPanel();
+  XYLayout xYLayout1 = new XYLayout();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JLabel jLabel2 = new JLabel();
+  JTextField jTextField2 = new JTextField();
+  JButton jButton1 = new JButton();
+
+  public deleteinfFrame() {
+    try {
+      jbInit();
+      this.setTitle("删除学生信息");
+      this.setSize(500,300);
+      this.setResizable(false);
+      this.setLocation(200,300);
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    this.getContentPane().setLayout(borderLayout1);
+    jPanel1.setLayout(xYLayout1);
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("学号");
+    jTextField1.setText("jTextField1");
+    jLabel2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel2.setText("姓名");
+    jTextField2.setText("jTextField2");
+    jButton1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton1.setToolTipText("");
+    jButton1.setFocusPainted(true);
+    jButton1.setText("删除");
+    this.getContentPane().add(jPanel1, BorderLayout.CENTER);
+    jPanel1.add(jLabel2,  new XYConstraints(107, 141, 64, 36));
+    jPanel1.add(jButton1, new XYConstraints(146, 198, 107, 37));
+    jPanel1.add(jLabel1,  new XYConstraints(107, 82, 70, 32));
+    jPanel1.add(jTextField1,     new XYConstraints(187, 77, 136, 29));
+    jPanel1.add(jTextField2,  new XYConstraints(187, 143, 133, 27));
+  }
+}

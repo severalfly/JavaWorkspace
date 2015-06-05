@@ -1,0 +1,33 @@
+!SESSION 2015-06-04 21:24:58.053 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_35
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=zh_CN
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2015-06-04 21:25:37.175
+!MESSAGE Invalid preference page path: XML Syntax
+
+!ENTRY org.eclipse.core.jobs 2 2 2015-06-04 22:16:34.612
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.jface.text.contentassist.AdditionalInfoController$3
+
+!ENTRY org.eclipse.core.jobs 2 2 2015-06-04 22:16:34.627
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.jface.text.contentassist.AdditionalInfoController$3
+!SESSION 2015-06-05 16:44:38.227 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_35
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=zh_CN
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2015-06-05 17:08:23.583
+!MESSAGE Invalid preference page path: XML Syntax
+!SESSION 2015-06-05 17:20:47.846 -----------------------------------------------
+eclipse.buildId=I20110613-1736
+java.version=1.6.0_35
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=zh_CN
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.ui 4 4 2015-06-05 17:38:44.270
+!MESSAGE Invalid preference page path: XML Syntax

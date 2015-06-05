@@ -1,0 +1,47 @@
+package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class classrequestFrame extends JFrame {
+  BorderLayout borderLayout1 = new BorderLayout();
+  JPanel jPanel1 = new JPanel();
+  JPanel jPanel2 = new JPanel();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JTextArea jTextArea1 = new JTextArea();
+  BorderLayout borderLayout2 = new BorderLayout();
+
+  public classrequestFrame() {
+    try {
+      jbInit();
+      this.setTitle("修改学生信息");
+      this.setSize(500,400);
+      this.setResizable(false);
+      this.setLocation(200,300);
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    this.getContentPane().setLayout(borderLayout1);
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("请输入班级");
+    jPanel2.setLayout(borderLayout2);
+    jTextArea1.setPreferredSize(new Dimension(100, 18));
+    jTextArea1.setSelectionEnd(0);
+    jTextArea1.setText("");
+    jTextField1.setOpaque(false);
+    jTextField1.setPreferredSize(new Dimension(100, 21));
+    jTextField1.setSelectionStart(21);
+    jTextField1.setText("");
+    this.getContentPane().add(jPanel1, BorderLayout.NORTH);
+    jPanel1.add(jLabel1, null);
+    jPanel1.add(jTextField1, null);
+    this.getContentPane().add(jPanel2, BorderLayout.CENTER);
+    jPanel2.add(jTextArea1, BorderLayout.CENTER);
+  }
+}

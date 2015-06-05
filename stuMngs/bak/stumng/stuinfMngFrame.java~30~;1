@@ -1,0 +1,213 @@
+package stumng;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/**
+ * <p>Title: </p>
+ * <p>Description: </p>
+ * <p>Copyright: Copyright (c) 2005</p>
+ * <p>Company: </p>
+ * @author not attributable
+ * @version 1.0
+ */
+
+public class stuinfMngFrame extends JFrame {
+  JPanel contentPane;
+  addinfFrame addinfframe = new addinfFrame();
+  modifyinfFrame modifyinfframe = new modifyinfFrame();
+  deleteinfFrame deleteinfframe = new deleteinfFrame();
+  grademngFrame grademngframe = new grademngFrame();
+  idrequestFrame idrequestframe = new idrequestFrame();
+  namerequestFrame namerequestframe = new namerequestFrame();
+  classrequestFrame classrequestframe = new classrequestFrame();
+  graderankFrame graderankframe = new graderankFrame();
+  graderequestFrame graderequestframe = new graderequestFrame();
+  JMenuBar jMenuBar1 = new JMenuBar();
+  JMenu StuinfMenu = new JMenu();
+  JMenuItem addinfMenuItem = new JMenuItem();
+  JMenu StuachivmentMenu = new JMenu();
+  JMenuItem grademngMenuItem = new JMenuItem();
+  BorderLayout borderLayout1 = new BorderLayout();
+  JMenu requestMenu = new JMenu();
+  JMenu statMenu = new JMenu();
+  JMenu assistanceMenu = new JMenu();
+  JMenu exitMenu = new JMenu();
+  JMenuItem modifyinfMenuItem = new JMenuItem();
+  JMenuItem deleteinfMenuItem = new JMenuItem();
+  JMenuItem graderequestMenuItem = new JMenuItem();
+  JMenuItem stustatMenuItem = new JMenuItem();
+  JMenuItem gradestatMenuItem = new JMenuItem();
+  JMenuItem about = new JMenuItem();
+  JMenu sturequestMenu = new JMenu();
+  JMenuItem nameMenuItem = new JMenuItem();
+  JMenuItem idMenuItem = new JMenuItem();
+  JMenuItem classMenuItem = new JMenuItem();
+  JMenuItem exitsystemMenuItem = new JMenuItem();
+  JMenuItem totalrankMenuItem = new JMenuItem();
+  JMenuItem mathrankMenuItem = new JMenuItem();
+  JMenuItem englishrankMenuItem = new JMenuItem();
+  JMenuItem chineserankMenuItem = new JMenuItem();
+  JMenuItem commentrankMenuItem = new JMenuItem();
+  JMenuItem graderankMenuItem = new JMenuItem();
+
+  //Construct the frame
+  public stuinfMngFrame() {
+    enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+    try {
+      jbInit();
+      exitsystemMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed( ActionEvent event )
+        {
+          System.exit(0);
+        }
+      }
+      );
+      addinfMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed( ActionEvent event )
+       {
+         addinfframe.show();
+       }
+     }
+      );
+      modifyinfMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed( ActionEvent event )
+       {
+         modifyinfframe.show();
+       }
+     }
+      );
+      deleteinfMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed( ActionEvent event )
+       {
+         deleteinfframe.show();
+       }
+     }
+      );
+      grademngMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed( ActionEvent event )
+       {
+         grademngframe.show();
+       }
+     }
+      );
+      nameMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed( ActionEvent event )
+       {
+         namerequestframe.show();
+       }
+     }
+      );
+      idMenuItem.addActionListener(new ActionListener()
+     {
+       public void actionPerformed( ActionEvent event )
+      {
+        idrequestframe.show();
+      }
+    }
+     );
+     classMenuItem.addActionListener(new ActionListener()
+     {
+       public void actionPerformed( ActionEvent event )
+      {
+        classrequestframe.show();
+      }
+    }
+     );
+     graderankMenuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed( ActionEvent event )
+     {
+      graderankframe.show();
+     }
+   }
+    );
+    graderequestMenuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed( ActionEvent event )
+     {
+      graderequestframe.show();
+     }
+   }
+    );
+
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  //Component initialization
+  private void jbInit() throws Exception  {
+    contentPane = (JPanel) this.getContentPane();
+    contentPane.setLayout(borderLayout1);
+    this.setSize(new Dimension(400, 300));
+    this.setTitle("Frame Title");
+    StuinfMenu.setText("学生信息管理");
+    addinfMenuItem.setText("增加学生信息");
+    StuachivmentMenu.setText("学生成绩管理");
+    grademngMenuItem.setText("学生成绩综合管理");
+    requestMenu.setText("查询");
+    statMenu.setText("统计");
+    assistanceMenu.setText("帮助");
+    exitMenu.setText("退出");
+    modifyinfMenuItem.setText("修改学生信息");
+    deleteinfMenuItem.setText("删除学生信息");
+    graderequestMenuItem.setText("成绩查询");
+    stustatMenuItem.setText("人员统计");
+    gradestatMenuItem.setText("成绩统计");
+    about.setText("关于");
+    sturequestMenu.setText("人员查询");
+    nameMenuItem.setText("按姓名");
+    idMenuItem.setText("按学号");
+    StuinfMenu.addSeparator();
+    classMenuItem.setText("按班级");
+    exitsystemMenuItem.setText("退出系统");
+    totalrankMenuItem.setText("按  总  分");
+    mathrankMenuItem.setText("按数学成绩");
+    englishrankMenuItem.setText("按英语成绩");
+    chineserankMenuItem.setText("按语文成绩");
+    commentrankMenuItem.setText("按  总成绩");
+    graderankMenuItem.setText("排              名");
+    StuinfMenu.add(addinfMenuItem);
+    StuinfMenu.addSeparator();
+    StuinfMenu.add(modifyinfMenuItem);
+    StuinfMenu.addSeparator();
+    StuinfMenu.add(deleteinfMenuItem);
+    StuachivmentMenu.addSeparator();
+    StuachivmentMenu.add(grademngMenuItem);
+    StuachivmentMenu.addSeparator();
+    StuachivmentMenu.add(graderankMenuItem);
+    jMenuBar1.add(StuinfMenu);
+    jMenuBar1.add(StuachivmentMenu);
+    jMenuBar1.add(requestMenu);
+    jMenuBar1.add(statMenu);
+    jMenuBar1.add(assistanceMenu);
+    jMenuBar1.add(exitMenu);
+    requestMenu.addSeparator();
+    requestMenu.add(sturequestMenu);
+    requestMenu.addSeparator();
+    requestMenu.add(graderequestMenuItem);
+    statMenu.addSeparator();
+    statMenu.add(stustatMenuItem);
+    statMenu.addSeparator();
+    statMenu.add(gradestatMenuItem);
+    assistanceMenu.addSeparator();
+    assistanceMenu.add(about);
+    sturequestMenu.add(nameMenuItem);
+    sturequestMenu.addSeparator();
+    sturequestMenu.add(idMenuItem);
+    sturequestMenu.addSeparator();
+    sturequestMenu.add(classMenuItem);
+    exitMenu.add(exitsystemMenuItem);
+    this.setJMenuBar(jMenuBar1);
+  }
+}
+

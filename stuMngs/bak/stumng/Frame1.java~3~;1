@@ -1,0 +1,149 @@
+package stumng;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/**
+ * <p>Title: </p>
+ * <p>Description: </p>
+ * <p>Copyright: Copyright (c) 2005</p>
+ * <p>Company: </p>
+ * @author not attributable
+ * @version 1.0
+ */
+
+public class Frame1 extends JFrame {
+  JPanel contentPane;
+  JMenuBar jMenuBar1 = new JMenuBar();
+  JMenu StuinfMenu = new JMenu();
+  JMenuItem addinfMenuItem = new JMenuItem();
+  JMenu StuachivmentMenu = new JMenu();
+  JMenuItem addgradeMenuItem = new JMenuItem();
+  BorderLayout borderLayout1 = new BorderLayout();
+  JMenu requestMenu = new JMenu();
+  JMenu statMenu = new JMenu();
+  JMenu assistanceMenu = new JMenu();
+  JMenu exitMenu = new JMenu();
+  JMenuItem modifyinfMenuItem = new JMenuItem();
+  JMenuItem deleteinfMenuItem = new JMenuItem();
+  JMenuItem modifygradeMenuItem = new JMenuItem();
+  JMenuItem jMenuItem5 = new JMenuItem();
+  JMenuItem jMenuItem6 = new JMenuItem();
+  JMenuItem jMenuItem7 = new JMenuItem();
+  JMenuItem jMenuItem8 = new JMenuItem();
+  JMenu jMenu1 = new JMenu();
+  JMenuItem jMenuItem1 = new JMenuItem();
+  JMenuItem jMenuItem2 = new JMenuItem();
+  JMenuItem jMenuItem3 = new JMenuItem();
+
+  //Construct the frame
+  public Frame1() {
+    enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+    try {
+      jbInit();
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  //Component initialization
+  private void jbInit() throws Exception  {
+    contentPane = (JPanel) this.getContentPane();
+    contentPane.setLayout(borderLayout1);
+    this.setSize(new Dimension(400, 300));
+    this.setTitle("Frame Title");
+    StuinfMenu.setText("学生信息管理");
+    addinfMenuItem.setText("增加学生信息");
+    addinfMenuItem.addActionListener(new Frame1_addinfMenuItem_ActionAdapter(this));
+    StuachivmentMenu.setText("学生成绩管理");
+    addgradeMenuItem.setText("增加学生成绩");
+    addgradeMenuItem.addActionListener(new Frame1_addgradeMenuItem_ActionAdapter(this));
+    requestMenu.setText("查询");
+    statMenu.setText("统计");
+    assistanceMenu.setText("帮助");
+    exitMenu.setText("退出");
+    modifyinfMenuItem.setText("修改学生信息");
+    deleteinfMenuItem.setText("删除学生信息");
+    modifygradeMenuItem.setText("修改学生成绩");
+    jMenuItem5.setText("成绩查询");
+    jMenuItem6.setText("人员统计");
+    jMenuItem7.setText("成绩统计");
+    jMenuItem8.setText("关于");
+    jMenu1.setText("人员查询");
+    jMenuItem1.setText("按姓名");
+    jMenuItem2.setText("按学号");
+    StuinfMenu.addSeparator();
+    jMenuItem3.setText("按班级");
+    StuinfMenu.add(addinfMenuItem);
+    StuinfMenu.addSeparator();
+    StuinfMenu.add(modifyinfMenuItem);
+    StuinfMenu.addSeparator();
+    StuinfMenu.add(deleteinfMenuItem);
+    StuachivmentMenu.addSeparator();
+    StuachivmentMenu.add(addgradeMenuItem);
+    StuachivmentMenu.addSeparator();
+    StuachivmentMenu.add(modifygradeMenuItem);
+    jMenuBar1.add(StuinfMenu);
+    jMenuBar1.add(StuachivmentMenu);
+    jMenuBar1.add(requestMenu);
+    jMenuBar1.add(statMenu);
+    jMenuBar1.add(assistanceMenu);
+    jMenuBar1.add(exitMenu);
+    requestMenu.addSeparator();
+    requestMenu.add(jMenu1);
+    requestMenu.addSeparator();
+    requestMenu.add(jMenuItem5);
+    statMenu.addSeparator();
+    statMenu.add(jMenuItem6);
+    statMenu.addSeparator();
+    statMenu.add(jMenuItem7);
+    assistanceMenu.addSeparator();
+    assistanceMenu.add(jMenuItem8);
+    jMenu1.add(jMenuItem1);
+    jMenu1.addSeparator();
+    jMenu1.add(jMenuItem2);
+    jMenu1.add(jMenuItem3);
+    this.setJMenuBar(jMenuBar1);
+  }
+
+  //File | Exit action performed
+  public void addinfMenuItem_actionPerformed(ActionEvent e) {
+    System.exit(0);
+  }
+
+  //Help | About action performed
+  public void addgradeMenuItem_actionPerformed(ActionEvent e) {
+  }
+
+  //Overridden so we can exit when window is closed
+  protected void processWindowEvent(WindowEvent e) {
+    super.processWindowEvent(e);
+    if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+      addinfMenuItem_actionPerformed(null);
+    }
+  }
+}
+
+class Frame1_addinfMenuItem_ActionAdapter implements ActionListener {
+  Frame1 adaptee;
+
+  Frame1_addinfMenuItem_ActionAdapter(Frame1 adaptee) {
+    this.adaptee = adaptee;
+  }
+  public void actionPerformed(ActionEvent e) {
+    adaptee.addinfMenuItem_actionPerformed(e);
+  }
+}
+
+class Frame1_addgradeMenuItem_ActionAdapter implements ActionListener {
+  Frame1 adaptee;
+
+  Frame1_addgradeMenuItem_ActionAdapter(Frame1 adaptee) {
+    this.adaptee = adaptee;
+  }
+  public void actionPerformed(ActionEvent e) {
+    adaptee.addgradeMenuItem_actionPerformed(e);
+  }
+}

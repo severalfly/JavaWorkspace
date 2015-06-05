@@ -1,0 +1,1227 @@
+package stumng;
+
+import java.sql.*;
+import java.util.*;
+import java.sql.Date;
+import java.util.regex.*;
+
+/*连接池管理类,可以管理多个数据库连接池*/
+public class DBConnManager {
+  //连接池名列表
+  private Vector poolnames = new Vector();
+
+  //驱动程序名列表
+  private Vector drivernames = new Vector();
+
+  //数据库标识列表
+  private Vector dbids = new Vector();
+
+  //用户名列表
+  private Vector usernames = new Vector();
+
+  //密码列表
+  private Vector passwds = new Vector();
+
+  //最大连接数列表
+  private Vector maxconns = new Vector();
+
+  //连接池队列
+  private Hashtable connPools = new Hashtable();
+
+  public DBConnManager() {
+    //添加Access数据库的连接信息
+    poolnames.addElement("Access");
+    drivernames.addElement("sun.jdbc.odbc.JdbcOdbcDriver");
+    dbids.addElement("jdbc:odbc:stuMngs");
+    usernames.addElement("wangqiaoyun");
+    passwds.addElement("wangqiaoyun");
+    maxconns.addElement("300");
+
+    //创建连接池
+    createPools();
+  }
+
+  /*将连接返回给由指定的连接池*/
+  public void releaseConnection(String name, Connection con) {
+    DBConnPool pool = (DBConnPool) connPools.get(name);
+    if (pool != null)
+      pool.releaseConnection(con);
+  }
+
+  /*得到一个指定连接池中的连接*/
+  public Connection getConnection(String name) {
+    DBConnPool pool = (DBConnPool) connPools.get(name);
+    if (pool != null)
+      return pool.getConnection();
+    else return null;
+  }
+
+  /*往Access数据库中插入数据时，进行编码转换*
+           public String ISOtoGBK(String iso) {
+    String gb;
+    try {
+      if (iso.equals("")) {
+        return "";
+      }
+      else {
+        gb = new String(iso.getBytes("ISO-8859-1"),"GBK");
+        return gb;
+      }
+    }
+    catch (Exception e) {
+      System.err.print("编码转换错误：" + e.getMessage());
+      return "";
+    }
+           }
+
+   *往Access数据库中取数据时，进行编码转换*
+           public String GBKtoISO(String gb) {
+    String iso;
+    try {
+      if (gb.equals("")) {
+        return "";
+      }
+      else {
+        iso = new String(gb.getBytes("GBK"), "ISO-8859-1");
+        return iso;
+      }
+    }
+    catch (Exception e) {
+      System.err.print("编码转换错误：" + e.getMessage());
+      return "";
+    }
+           }*/
+
+
+
+  //检查该班是否存在此学生
+  public boolean userExist(int userId, String aclass) {
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    boolean occupied = true;
+    String sqlquery ="select * from stuinf_A2241 where stu_id=? and class ='"+aclass+"'";
+    try {
+      if (aclass.equals("A2241")) {
+        sqlquery = "select * from stuinf_A2241 where stu_id=?";
+      }
+      else if (aclass.equals("A2242")) {
+        sqlquery = "select * from stuinf_A2242 where stu_id=?";
+      }
+      else if (aclass.equals("A2243")) sqlquery = "select * from stuinf_A2243 where stu_id=?";
+      else occupied = false;
+      con = getConnection("Access");
+      ps = con.prepareStatement(sqlquery);
+      ps.setInt(1, userId);
+      rs = ps.executeQuery();
+      if (rs.next() == false )
+        occupied = false;
+      else occupied = true;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (rs != null)try {
+        rs.close();
+      }
+      catch (SQLException ignore) {}
+      if (ps != null)try {
+        ps.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+    }
+    return occupied;
+  }
+
+  //检查是否有该学生的成绩记录
+  public boolean gradeExist(int userId, String aclass) {
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    boolean occupied = true;
+    String sqlquery = null;
+    try {
+      if (aclass.equals("A2241")) {
+        sqlquery = "select * from stugrade_A2241 where stu_id=?";
+      }
+      else if (aclass.equals("A2242")) {
+        sqlquery = "select * from stugrade_A2242 where stu_id=?";
+      }
+      else sqlquery = "select * from stugrade_A2243 where stu_id=?";
+      con = getConnection("Access");
+      ps = con.prepareStatement(sqlquery);
+      ps.setInt(1, userId);
+      rs = ps.executeQuery();
+      if (!rs.next())
+        occupied = false;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (rs != null)try {
+        rs.close();
+      }
+      catch (SQLException ignore) {}
+      if (ps != null)try {
+        ps.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+    }
+    return occupied;
+  }
+
+  //删除学生
+  //userId为要删除的用户ID
+  public boolean removeUser(int userId, String aname, String aclass) {
+    Connection con = null;
+    PreparedStatement ps = null;
+    boolean delflag = false;
+    boolean exitflag = false;
+    String sqlupdate = null;
+    String sqldel = null;
+    try {
+      if (aclass.equals("A2241")) {
+        sqlupdate = "delete * from stuinf_A2241 where stu_id=? and name = ?";
+        exitflag = gradeExist(userId, aclass);
+        if (exitflag = true) {
+          sqldel = "delete * from stugrade_A2241 where stu_id= ?";
+        }
+      }
+      else if (aclass.equals("A2242")) {
+        sqlupdate = "delete * from stuinf_A2242 where stu_id=? and name = ?";
+        exitflag = gradeExist(userId, aclass);
+        if (exitflag = true) {
+          sqldel = "delete * from stugrade_A2242 where stu_id= ?";
+        }
+      }
+      else {
+        sqlupdate = "delete * from stuinf_A2243 where stu_id=? and name = ?";
+        exitflag = gradeExist(userId, aclass);
+        if (exitflag = true) {
+          sqldel = "delete * from stugrade_A2243 where stu_id= ?";
+        }
+      }
+      con = getConnection("Access");
+      ps = con.prepareStatement(sqlupdate);
+      ps.setInt(1, userId);
+      ps.setString(2, aname);
+      ps.executeUpdate();
+      exitflag = gradeExist(userId, aclass);
+      if (exitflag = true) {
+        ps = con.prepareStatement(sqldel);
+        ps.setInt(1, userId);
+        ps.executeUpdate();
+      }
+      delflag = true;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (ps != null)try {
+        ps.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+
+    }
+
+    return delflag;
+  }
+
+  //添加基本信息
+  //userId为添加的用户ID
+  public boolean addUser(String aname, int astu_id, String aclass,
+                         Date abirthday, String asex,
+                         String anativeplace, String aethnic) {
+    Connection con = null;
+    PreparedStatement ps = null;
+    boolean addflag = false;
+    String sqlInsert = null;
+    try {
+      if (aclass.equals("A2241")) {
+        sqlInsert = "insert into stuinf_A2241(name, stu_id, class, birthday, sex, nativeplace, ethnic ) values(?,?,?,?,?,?,?)";
+      }
+      else if (aclass.equals("A2242")) {
+        sqlInsert = "insert into stuinf_A2242(name, stu_id, class, birthday, sex, nativeplace, ethnic ) values(?,?,?,?,?,?,?)";
+      }
+      else sqlInsert = "insert into stuinf_A2243(name, stu_id, class, birthday, sex, nativeplace, ethnic ) values(?,?,?,?,?,?,?)";
+      con = getConnection("Access");
+      ps = con.prepareStatement(sqlInsert);
+      ps.setString(1, aname);
+      ps.setInt(2, astu_id);
+      ps.setString(3, aclass);
+      ps.setDate(4, abirthday);
+      ps.setString(5, asex);
+      ps.setString(6, anativeplace);
+      ps.setString(7, aethnic);
+      ps.executeUpdate();
+      addflag = true;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (ps != null)try {
+        ps.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+    }
+    return addflag;
+  }
+
+  //添加学生成绩
+  public boolean addGrade(String aclass, int astu_id, float atotal, float amath,
+                          float achinese,
+                          float aenglish, float acomposite) {
+    Connection con = null;
+    PreparedStatement ps = null;
+    boolean addflag = false;
+    String sqlInsert = null;
+    try {
+      if (aclass.equals("A2241")) {
+        sqlInsert = "insert into stugrade_A2241(stu_id, total, chinese, math, english, composite, class) values(?,?,?,?,?,?,?)";
+      }
+      else if (aclass.equals("A2242")) {
+        sqlInsert = "insert into stugrade_A2242(stu_id, total, chinese, math, english, composite, class) values(?,?,?,?,?,?,?)";
+      }
+      else sqlInsert = "insert into stugrade_A2243(stu_id, total, chinese, math, english, composite, class) values(?,?,?,?,?,?,?)";
+      con = getConnection("Access");
+      ps = con.prepareStatement(sqlInsert);
+      ps.setInt(1, astu_id);
+      ps.setString(7, aclass);
+      ps.setFloat(2, atotal);
+      ps.setFloat(3, achinese);
+      ps.setFloat(4, amath);
+      ps.setFloat(5, aenglish);
+      ps.setFloat(6, acomposite);
+      ps.executeUpdate();
+      addflag = true;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (ps != null)try {
+        ps.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+    }
+    return addflag;
+  }
+
+  //修改学生基本信息
+  public boolean updateUser(String aname, int astuid, String aclass,
+                            String asex, Date abirthday, String anativeplace,
+                            String aethnic) {
+    Connection conn = null;
+    boolean updflag = false;
+    ResultSet rs = null;
+    try {
+      conn = getConnection("Access");
+      //声明可更新的结果集
+      Statement stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                            ResultSet.CONCUR_UPDATABLE);
+      if (aclass.equals("A2241")) {
+        rs = stat.executeQuery("select * from stuinf_A2241 where stu_id = " +
+                               astuid);
+      }
+      else if (aclass.equals("A2242")) {
+        rs = stat.executeQuery("select * from stuinf_A2242 where stu_id = " +
+                               astuid);
+      }
+      else rs = stat.executeQuery("select * from stuinf_A2243 where stu_id = " +
+                                  astuid);
+
+      while (rs.next()) {
+        if (!aname.equals("")) {
+          rs.updateString("name", aname);
+          rs.updateRow();
+        }
+        if (!aclass.equals("")) {
+          rs.updateString("class", aclass);
+          rs.updateRow();
+        }
+        if (!asex.equals("")) {
+          rs.updateString("sex", asex);
+          rs.updateRow();
+        }
+        if (!anativeplace.equals("")) {
+          rs.updateString("nativeplace", anativeplace);
+          rs.updateRow();
+        }
+        if (!aethnic.equals("")) {
+          rs.updateString("ethnic", aethnic);
+          rs.updateRow();
+        }
+        if (abirthday != null) {
+          rs.updateDate("birthday", abirthday);
+          rs.updateRow();
+        }
+
+      }
+      updflag = true;
+
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (rs != null)try {
+        rs.close();
+      }
+      catch (SQLException ignore) {}
+      if (conn != null)try {
+        conn.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", conn);
+      }
+    }
+    return updflag;
+  }
+
+  //修改学生成绩
+  public boolean updateGrade(String aclass, int astu_id, String amath,
+                             String achinese,
+                             String aenglish, String acomposite) {
+    Connection conn = null;
+    boolean updflag = false;
+    ResultSet rs = null;
+    float atotal = 0;
+    try {
+      conn = getConnection("Access");
+      //声明可更新的结果集
+      Statement stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                            ResultSet.CONCUR_UPDATABLE);
+      if (aclass.equals("A2241")) {
+        rs = stat.executeQuery("select * from stugrade_A2241 where stu_id = " +
+                               astu_id);
+      }
+      else if (aclass.equals("A2242")) {
+        rs = stat.executeQuery("select * from stugrade_A2242 where stu_id = " +
+                               astu_id);
+      }
+      else rs = stat.executeQuery(
+          "select * from stugrade_A2243 where stu_id = " +
+          astu_id);
+
+      while (rs.next()) {
+
+        if (!achinese.equals("")) {
+          float chinese = Float.parseFloat(achinese);
+          rs.updateFloat("chinese", chinese);
+          atotal = chinese;
+          rs.updateRow();
+        }
+        else atotal = rs.getFloat(3);
+
+        if (!amath.equals("")) {
+          float math = Float.parseFloat(amath);
+          atotal = atotal + math;
+          rs.updateFloat("math", math);
+          rs.updateRow();
+        }
+        else atotal = atotal + rs.getFloat(4);
+
+        if (!aenglish.equals("")) {
+          float english = Float.parseFloat(aenglish);
+          atotal = atotal + english;
+          rs.updateFloat("english", english);
+          rs.updateRow();
+        }
+        else atotal = atotal + rs.getFloat(5);
+
+        if (!acomposite.equals("")) {
+          float composite = Float.parseFloat(acomposite);
+          atotal = atotal + composite;
+          rs.updateFloat("composite", composite);
+          rs.updateRow();
+        }
+        else atotal = atotal + rs.getFloat(6);
+
+        rs.updateFloat("total", atotal);
+        rs.updateRow();
+        atotal = 0;
+      }
+      updflag = true;
+
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (rs != null)try {
+        rs.close();
+      }
+      catch (SQLException ignore) {}
+      if (conn != null)try {
+        conn.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", conn);
+      }
+    }
+    return updflag;
+  }
+
+  //获取学生排名的详细信息
+  public Vector getRank(String aclass, String aschool, String bymath,
+                        String bychinese, String byenglish, String bycomposite,
+                        String bytotal) {
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    Vector resultdate = new Vector();
+    String sqlquery = null;
+    String bygrade = null;
+    try {
+      //全校成绩排名
+      if (!aschool.equals("")) {
+        if (!bychinese.equals("")) {
+          bygrade = "chinese";
+          sqlquery = "SELECT stu_id,chinese,class FROM stugrade_A2241 " +
+              "UNION SELECT stu_id,chinese,class FROM stugrade_A2242 " +
+              "UNION SELECT stu_id,chinese,class FROM stugrade_A2243 " +
+              "ORDER BY chinese DESC";
+        }
+        else if (!bymath.equals("")) {
+          bygrade = "math";
+          sqlquery = "SELECT stu_id,math,class FROM stugrade_A2241 " +
+              "UNION SELECT stu_id,math,class FROM stugrade_A2242 " +
+              "UNION SELECT stu_id,math,class FROM stugrade_A2243 " +
+              "ORDER BY math DESC";
+
+        }
+        else if (!byenglish.equals("")) {
+          bygrade = "english";
+          sqlquery = "SELECT stu_id,english,class FROM stugrade_A2241 " +
+              "UNION SELECT stu_id,english,class FROM stugrade_A2242 " +
+              "UNION SELECT stu_id,english,class FROM stugrade_A2243 " +
+              "ORDER BY english DESC";
+
+        }
+        else if (!bycomposite.equals("")) {
+          bygrade = "composite";
+          sqlquery = "SELECT stu_id,composite,class FROM stugrade_A2241 " +
+              "UNION SELECT stu_id,composite,class FROM stugrade_A2242 " +
+              "UNION SELECT stu_id,composite,class FROM stugrade_A2243 " +
+              "ORDER BY composite DESC";
+
+        }
+        else {
+          bygrade = "total";
+          sqlquery = "SELECT stu_id,total,class FROM stugrade_A2241 " +
+              "UNION SELECT stu_id,total,class FROM stugrade_A2242 " +
+              "UNION SELECT stu_id,total,class FROM stugrade_A2243 " +
+              "ORDER BY total DESC";
+
+        }
+      }
+      if (!aclass.equals("")) { //班级成绩排名
+        if (aclass.equals("A2241")) {
+          if (!bychinese.equals("")) {
+            bygrade = "chinese";
+            sqlquery = "select stu_id, chinese, class from stugrade_A2241 " +
+                "ORDER BY chinese DESC";
+          }
+          else if (!bymath.equals("")) {
+            bygrade = "math";
+            sqlquery = "select stu_id, math, class from stugrade_A2241 " +
+                "ORDER BY math DESC";
+          }
+          else if (!byenglish.equals("")) {
+            bygrade = "english";
+            sqlquery = "select stu_id, english, class from stugrade_A2241 " +
+                "ORDER BY english DESC";
+          }
+          else if (!bycomposite.equals("")) {
+            bygrade = "composite";
+            sqlquery = "select stu_id, composite, class from stugrade_A2241 " +
+                "ORDER BY composite DESC";
+          }
+          else {
+            bygrade = "total";
+            sqlquery = "select stu_id, total, class  from stugrade_A2241 " +
+                "ORDER BY total DESC";
+          }
+        }
+        else if (aclass.equals("A2242")) {
+          if (!bychinese.equals("")) {
+            bygrade = "chinese";
+            sqlquery = "select stu_id, chinese, class from stugrade_A2242 " +
+                "ORDER BY chinese DESC";
+          }
+          else if (!bymath.equals("")) {
+            bygrade = "math";
+            sqlquery = "select stu_id, math, class from stugrade_A2242 " +
+                "ORDER BY math DESC";
+          }
+          else if (!byenglish.equals("")) {
+            bygrade = "english";
+            sqlquery = "select stu_id, english, class from stugrade_A2242 " +
+                "ORDER BY english DESC";
+          }
+          else if (!bycomposite.equals("")) {
+            bygrade = "composite";
+            sqlquery = "select stu_id, composite, class  from stugrade_A2242 " +
+                "ORDER BY composite DESC";
+          }
+          else {
+            bygrade = "total";
+            sqlquery = "select stu_id, total, class  from stugrade_A2242 " +
+                "ORDER BY total DESC";
+          }
+        }
+        else if (aclass.equals("A2243")) {
+
+          if (!bychinese.equals("")) {
+            bygrade = "chinese";
+            sqlquery = "select stu_id, chinese, class from stugrade_A2243 " +
+                "ORDER BY chinese DESC";
+          }
+          else if (!bymath.equals("")) {
+            bygrade = "math";
+            sqlquery = "select stu_id, math, class from stugrade_A2243 " +
+                "ORDER BY math DESC";
+          }
+          else if (!byenglish.equals("")) {
+            bygrade = "english";
+            sqlquery = "select stu_id, english, class from stugrade_A2243 " +
+                "ORDER BY english DESC";
+          }
+          else if (!bycomposite.equals("")) {
+            bygrade = "composite";
+            sqlquery = "select stu_id, composite, class from stugrade_A2243 " +
+                "ORDER BY composite DESC";
+          }
+          else {
+            bygrade = "total";
+            sqlquery = "select stu_id, total, class from stugrade_A2243 " +
+                "ORDER BY total DESC";
+          }
+
+        }
+      }
+      con = getConnection("Access");
+      ps = con.prepareStatement(sqlquery);
+      rs = ps.executeQuery();
+      while (rs.next()) {
+        resultdate.add(rs.getString("stu_id"));
+        resultdate.add(rs.getString(bygrade));
+        resultdate.add(rs.getString("class"));
+      }
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (rs != null)try {
+        rs.close();
+      }
+      catch (SQLException ignore) {}
+      if (ps != null)try {
+        ps.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+    }
+    return resultdate;
+  }
+
+  //查询学生基本信息
+  public Vector stuinfQuery(int astuid, String aclass, String aname) {
+    Connection con = null;
+    ResultSet rs = null;
+    Statement statement = null;
+    String sqlquery = null;
+    Vector result = new Vector();
+    String sstuid = "";
+
+    try {
+     if (!aname.equals("")) {
+        if (!aclass.equals("全校")) {
+          if (aclass.equals("A2241")) sqlquery =
+              "select * from stuinf_A2241 where name ='"+aname+"'";
+          else if (aclass.equals("A2242")) sqlquery =
+              "select * from stuinf_A2242 where name ='"+aname+"'";
+          else if (aclass.equals("A2243")) sqlquery =
+              "select * from stuinf_A2243 where name ='"+aname+"'";
+        }
+        else sqlquery = "SELECT * FROM stuinf_A2241 where name ='"+aname+
+            "' UNION SELECT * FROM stuinf_A2242 where name ='"+aname+
+            "' UNION SELECT * FROM stuinf_A2243 where name ='"+aname+"'";
+      }
+      else if (!aclass.equals("")) {
+        if (aclass.equals("A2241")) sqlquery =
+            "select * from stuinf_A2241";
+        else if (aclass.equals("A2242")) sqlquery =
+            "select * from stuinf_A2242";
+        else if (aclass.equals("A2243")) sqlquery =
+            "select * from stuinf_A2243";
+      }else {
+        String stuid = String.valueOf(astuid);
+        if( stuid.length()<4 ) stuid = "11111";
+        sstuid = stuid.substring(0, 4);
+        if (sstuid.equals("2241"))
+          sqlquery = "select * from stuinf_A2241 where stu_id =" + astuid;
+        else if (sstuid.equals("2242"))
+          sqlquery = "select * from stuinf_A2242 where stu_id =" + astuid;
+        else sqlquery = "select * from stuinf_A2243 where stu_id =" + astuid;
+      }
+
+      con = getConnection("Access");
+      statement = con.createStatement();
+      rs = statement.executeQuery(sqlquery);
+      while (rs.next()) {
+        result.add(rs.getString("stu_id"));
+        result.add(rs.getString("name"));
+        result.add(rs.getString("class"));
+        result.add(rs.getString("sex"));
+        result.add(rs.getString("birthday"));
+        result.add(rs.getString("ethnic"));
+        result.add(rs.getString("nativeplace"));
+      }
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (rs != null)try {
+        rs.close();
+      }
+      catch (SQLException ignore) {}
+      if (statement != null)try {
+        statement.close();
+      }
+      catch (SQLException ignore) {}
+      if (con != null)try {
+        con.close();
+      }
+      catch (SQLException ignore) {}
+      finally {
+        releaseConnection("Access", con);
+      }
+    }
+    return result;
+  }
+
+  //查询学生成绩信息
+ public Vector stuGradeQuery( int astuid, String aclass ) {
+   Connection con = null;
+   ResultSet rs = null;
+   Statement statement = null;
+   String sqlquery = null;
+   Vector result = new Vector();
+   String sstuid = "";
+
+   try {
+     if (astuid != 0) {
+       String stuid = String.valueOf(astuid);
+       sstuid = stuid.substring(0, 4);
+       if (sstuid.equals("2241"))
+         sqlquery =
+             "select stugrade_A2241.stu_id, name, chinese, math, english, " +
+             "composite, total, stuinf_A2241.class from stuinf_A2241,stugrade_A2241 " +
+             "where stuinf_A2241.stu_id = stugrade_A2241.stu_id " +
+             "and stugrade_A2241.stu_id =" + astuid;
+       else if (sstuid.equals("2242"))
+         sqlquery =
+             "select stugrade_A2242.stu_id, name, chinese, math, english, " +
+             "composite, total, stuinf_A2242.class from stuinf_A2242,stugrade_A2242 " +
+             "where stuinf_A2242.stu_id = stugrade_A2242.stu_id " +
+             "and stugrade_A2242.stu_id =" + astuid;
+       else sqlquery =
+           "select stugrade_A2243.stu_id, name, chinese, math, english, " +
+           "composite, total, stuinf_A2243.class from stuinf_A2243,stugrade_A2243 " +
+           "where stuinf_A2243.stu_id = stugrade_A2243.stu_id " +
+           "and stugrade_A2243.stu_id =" + astuid;
+     }
+     else if (!aclass.equals("")) {
+       if (aclass.equals("A2241")) sqlquery =
+           "select stugrade_A2241.stu_id, name, chinese, math, english, " +
+           "composite, total, stuinf_A2241.class from stuinf_A2241,stugrade_A2241 " +
+           "where stuinf_A2241.stu_id = stugrade_A2241.stu_id ";
+       else if (aclass.equals("A2242")) sqlquery =
+           "select stugrade_A2242.stu_id, name, chinese, math, english, " +
+           "composite, total, stuinf_A2242.class from stuinf_A2242,stugrade_A2242 " +
+           "where stuinf_A2242.stu_id = stugrade_A2242.stu_id ";
+       else if (aclass.equals("A2243")) sqlquery =
+           "select stugrade_A2243.stu_id, name, chinese, math, english, " +
+           "composite, total, stuinf_A2243.class from stuinf_A2243,stugrade_A2243 " +
+           "where stuinf_A2243.stu_id = stugrade_A2243.stu_id ";
+     }
+     con = getConnection("Access");
+     statement = con.createStatement();
+     rs = statement.executeQuery(sqlquery);
+     while (rs.next()) {
+       result.add(rs.getString("stu_id"));
+       result.add(rs.getString("name"));
+       result.add(rs.getString("chinese"));
+       result.add(rs.getString("math"));
+       result.add(rs.getString("english"));
+       result.add(rs.getString("composite"));
+       result.add(rs.getString("total"));
+       result.add(rs.getString("class"));
+     }
+   }
+   catch (SQLException e) {
+     e.printStackTrace();
+   }
+   finally {
+     if (rs != null)try {
+       rs.close();
+     }
+     catch (SQLException ignore) {}
+     if (statement != null)try {
+       statement.close();
+     }
+     catch (SQLException ignore) {}
+     if (con != null)try {
+       con.close();
+     }
+     catch (SQLException ignore) {}
+     finally {
+       releaseConnection("Access", con);
+     }
+   }
+   return result;
+ }
+
+//学生成绩统计
+ public Vector getSum(String aclass, String aschool, String grade, float first, float last) {
+   Connection con = null;
+   PreparedStatement ps = null;
+   ResultSet rs = null;
+   Vector resultdate = new Vector();
+   String sqlquery = null;
+   try {
+     //全校成绩统计
+     if (!aschool.equals("")) {
+       if (grade.equals("chinese"))
+         sqlquery =
+             "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,chinese,stugrade_A2241.class " +
+             "FROM stugrade_A2241,stuinf_A2241 " +
+             "where chinese between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id " +
+             "UNION SELECT stugrade_A2242.stu_id,stuinf_A2242.name,chinese,stuinf_A2242.class " +
+             "FROM stugrade_A2242,stuinf_A2242 " +
+             "where chinese between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id " +
+             "UNION SELECT stugrade_A2243.stu_id,stuinf_A2243.name,chinese,stuinf_A2243.class " +
+             "FROM stugrade_A2243,stuinf_A2243 where chinese " +
+             "between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+       else if (grade.equals("math"))
+         sqlquery =
+             "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,math,stugrade_A2241.class " +
+             "FROM stugrade_A2241,stuinf_A2241 " +
+             "where math between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id " +
+             "UNION SELECT stugrade_A2242.stu_id,stuinf_A2242.name,math,stuinf_A2242.class " +
+             "FROM stugrade_A2242,stuinf_A2242 " +
+             "where math between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id " +
+             "UNION SELECT stugrade_A2243.stu_id,stuinf_A2243.name,math,stuinf_A2243.class " +
+             "FROM stugrade_A2243,stuinf_A2243 where math " +
+             "between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+       else if (grade.equals("english"))
+         sqlquery =
+             "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,english,stugrade_A2241.class " +
+             "FROM stugrade_A2241,stuinf_A2241 " +
+             "where english between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id " +
+             "UNION SELECT stugrade_A2242.stu_id,stuinf_A2242.name,english,stuinf_A2242.class " +
+             "FROM stugrade_A2242,stuinf_A2242 " +
+             "where english between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id " +
+             "UNION SELECT stugrade_A2243.stu_id,stuinf_A2243.name,english,stuinf_A2243.class " +
+             "FROM stugrade_A2243,stuinf_A2243 where english " +
+             "between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+       else if (grade.equals("composite"))
+         sqlquery =
+             "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,composite,stugrade_A2241.class " +
+             "FROM stugrade_A2241,stuinf_A2241 " +
+             "where composite between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id " +
+             "UNION SELECT stugrade_A2242.stu_id,stuinf_A2242.name,composite,stuinf_A2242.class " +
+             "FROM stugrade_A2242,stuinf_A2242 " +
+             "where composite between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id " +
+             "UNION SELECT stugrade_A2243.stu_id,stuinf_A2243.name,composite,stuinf_A2243.class " +
+             "FROM stugrade_A2243,stuinf_A2243 where composite " +
+             "between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+       else {
+         sqlquery =
+             "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,total,stugrade_A2241.class " +
+             "FROM stugrade_A2241,stuinf_A2241 " +
+             "where total between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id " +
+             "UNION SELECT stugrade_A2242.stu_id,stuinf_A2242.name,total,stuinf_A2242.class " +
+             "FROM stugrade_A2242,stuinf_A2242 " +
+             "where total between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id " +
+             "UNION SELECT stugrade_A2243.stu_id,stuinf_A2243.name,total,stuinf_A2243.class " +
+             "FROM stugrade_A2243,stuinf_A2243 where total " +
+             "between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+       }
+     }
+     if (!aclass.equals("")) { //班级成绩统计
+       if (aclass.equals("A2241")) {
+         if (grade.equals("chinese"))
+           sqlquery =
+               "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,chinese,stugrade_A2241.class " +
+               "FROM stugrade_A2241,stuinf_A2241 " +
+               "where chinese between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id";
+         else if (grade.equals("math"))
+           sqlquery =
+               "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,math,stugrade_A2241.class " +
+               "FROM stugrade_A2241,stuinf_A2241 " +
+               "where math between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id";
+         else if (grade.equals("english"))
+           sqlquery =
+               "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,english,stugrade_A2241.class " +
+               "FROM stugrade_A2241,stuinf_A2241 " +
+               "where english between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id";
+         else if (grade.equals("composite"))
+           sqlquery =
+               "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,composite,stugrade_A2241.class " +
+               "FROM stugrade_A2241,stuinf_A2241 " +
+               "where composite between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id";
+         else {
+           sqlquery =
+               "SELECT stugrade_A2241.stu_id,stuinf_A2241.name,total,stugrade_A2241.class " +
+               "FROM stugrade_A2241,stuinf_A2241 " +
+               "where total between ? and ? and stuinf_A2241.stu_id = stugrade_A2241.stu_id";
+         }
+       }
+       else if (aclass.equals("A2242")) {
+         if (grade.equals("chinese"))
+           sqlquery =
+               "SELECT stugrade_A2242.stu_id,stuinf_A2242.name,chinese,stugrade_A2242.class " +
+               "FROM stugrade_A2242,stuinf_A2242 " +
+               "where chinese between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id";
+         else if (grade.equals("math"))
+           sqlquery =
+               "SELECT stugrade_A2242.stu_id,stuinf_A2242.name,math,stugrade_A2242.class " +
+               "FROM stugrade_A2242,stuinf_A2242 " +
+               "where math between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id";
+         else if (grade.equals("english"))
+           sqlquery =
+               "SELECT stugrade_A2242.stu_id,stuinf_A2242.name,english,stugrade_A2242.class " +
+               "FROM stugrade_A2242,stuinf_A2242 " +
+               "where english between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id";
+         else if (grade.equals("composite"))
+           sqlquery =
+               "SELECT stugrade_A2242.stu_id,stuinf_A2242.name,composite,stugrade_A2242.class " +
+               "FROM stugrade_A2242,stuinf_A2242 "+
+               "where composite between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id";
+         else {
+           sqlquery =
+               "SELECT stugrade_A2242.stu_id,stuinf_A2242.name,total,stugrade_A2242.class " +
+               "FROM stugrade_A2242,stuinf_A2242 " +
+               "where total between ? and ? and stuinf_A2242.stu_id = stugrade_A2242.stu_id";
+         }
+       }
+       else if (aclass.equals("A2243")) {
+         if (grade.equals("chinese"))
+           sqlquery =
+               "SELECT stugrade_A2243.stu_id,stuinf_A2243.name,chinese,stugrade_A2243.class " +
+               "FROM stugrade_A2243,stuinf_A2243 " +
+               "where chinese between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+         else if (grade.equals("math"))
+           sqlquery =
+               "SELECT stugrade_A2243.stu_id,stuinf_A2243.name,math,stugrade_A2243.class " +
+               "FROM stugrade_A2243,stuinf_A2243 " +
+               "where math between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+         else if (grade.equals("english"))
+           sqlquery =
+               "SELECT stugrade_A2243.stu_id,stuinf_A2243.name,english,stugrade_A2243.class " +
+               "FROM stugrade_A2243,stuinf_A2243 " +
+               "where english between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+         else if (grade.equals("composite"))
+           sqlquery =
+               "SELECT stugrade_A2243.stu_id,stuinf_A2243.name,composite,stugrade_A2243.class " +
+               "FROM stugrade_A2243,stuinf_A2243 " +
+               "where composite between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+         else {
+           sqlquery =
+               "SELECT stugrade_A2243.stu_id,stuinf_A2243.name,total,stugrade_A2243.class " +
+               "FROM stugrade_A2243,stuinf_A2243 " +
+               "where total between ? and ? and stuinf_A2243.stu_id = stugrade_A2243.stu_id";
+         }
+       }
+     }
+     con = getConnection("Access");
+     ps = con.prepareStatement(sqlquery);
+     if (aschool.equals("全校"))
+     {
+       ps.setFloat(1, first);
+       ps.setFloat(2, last);
+       ps.setFloat(3, first);
+       ps.setFloat(4, last);
+       ps.setFloat(5, first);
+       ps.setFloat(6, last);
+     }else{
+       ps.setFloat(1, first);
+       ps.setFloat(2, last);
+     }
+     rs = ps.executeQuery();
+     while (rs.next()) {
+       resultdate.add(rs.getString("stu_id"));
+       resultdate.add(rs.getString("name"));
+       resultdate.add(rs.getString(grade));
+       resultdate.add(rs.getString("class"));
+     }
+   }
+   catch (SQLException e) {
+     e.printStackTrace();
+   }
+   finally {
+     if (rs != null)try {
+       rs.close();
+     }
+     catch (SQLException ignore) {}
+     if (ps != null)try {
+       ps.close();
+     }
+     catch (SQLException ignore) {}
+     if (con != null)try {
+       con.close();
+     }
+     catch (SQLException ignore) {}
+     finally {
+       releaseConnection("Access", con);
+     }
+   }
+   return resultdate;
+ }
+
+//学生统计
+ public Vector getpeopleSum(String aclass, String aschool, String sumstr,String aethnic, String range1, String range2) {
+   Connection con = null;
+   PreparedStatement ps = null;
+   ResultSet rs = null;
+   Vector resultdate = new Vector();
+   String sqlquery = null;
+   try {
+     //全校学生统计
+     if (aschool.equals("全校")){
+       if (sumstr.equals("男"))
+         sqlquery =
+             "SELECT stu_id,name,sex,class FROM stuinf_A2241 " +
+             "where sex = '男' " +
+             "UNION SELECT stu_id,name,sex,class FROM stuinf_A2242 "+
+             "where sex = '男' " +
+             "UNION SELECT stu_id,name,sex,class FROM stuinf_A2243 "+
+             "where sex = '男'";
+       else if (sumstr.equals("女"))
+         sqlquery =
+             "SELECT stu_id,name,sex,class FROM stuinf_A2241 " +
+             "where sex = '女' " +
+             "UNION SELECT stu_id,name,sex,class FROM stuinf_A2242 "+
+             "where sex = '女' " +
+             "UNION SELECT stu_id,name,sex,class FROM stuinf_A2243 "+
+             "where sex = '女'";
+       else if (sumstr.equals("民族"))
+         sqlquery =
+             "SELECT stu_id,name,ethnic,class FROM stuinf_A2241 " +
+             "where ethnic LIKE '"+aethnic+"' "+
+             " UNION SELECT stu_id,name,ethnic,class FROM stuinf_A2242 "+
+             "where ethnic LIKE '"+aethnic+"' " +
+             "UNION SELECT stu_id,name,ethnic,class FROM stuinf_A2243 "+
+             "where ethnic LIKE '"+aethnic+"'";
+       else if (sumstr.equals("出生日期"))
+         sqlquery =
+             "SELECT stu_id,name,birthday,class FROM stuinf_A2241 " +
+             "where birthday between "+range1+" and "+range2+
+             " order by birthday ASC "+
+             " UNION SELECT stu_id,name,birthday,class FROM stuinf_A2242 "+
+             "where birthday between "+range1+" and "+range2+
+             " order by birthday ASC "+
+             " UNION SELECT stu_id,name,birthday,class FROM stuinf_A2243 "+
+             "where birthday between "+range1+ " and "+range2+" order by birthday ASC";
+     }
+     if (!aclass.equals("")) { //班级成绩统计
+       if (aclass.equals("A2241")) {
+         if (sumstr.equals("男"))
+           sqlquery =
+               "SELECT stu_id,name,sex,class FROM stuinf_A2241 " +
+               "where sex = '男' ";
+         else if (sumstr.equals("女"))
+           sqlquery =
+               "SELECT stu_id,name,sex,class FROM stuinf_A2241 " +
+               "where sex = '女' ";
+         else if (sumstr.equals("民族"))
+           sqlquery =
+               "SELECT stu_id,name,ethnic,class FROM stuinf_A2241 " +
+               "where ethnic LIKE '"+aethnic+"'";
+         else if (sumstr.equals("出生日期"))
+           sqlquery =
+               "SELECT stu_id,name,birthday,class FROM stuinf_A2241 " +
+               "where birthday between " +range1+ " and "+range2+" order by birthday ASC";
+       }
+       else if (aclass.equals("A2242")) {
+         if (sumstr.equals("男"))
+           sqlquery =
+               "SELECT stu_id,name,sex,class FROM stuinf_A2242 " +
+               "where sex = '男' ";
+         else if (sumstr.equals("女"))
+           sqlquery =
+               "SELECT stu_id,name,sex,class FROM stuinf_A2242 " +
+               "where sex = '女' ";
+         else if (sumstr.equals("民族"))
+           sqlquery =
+               "SELECT stu_id,name,ethnic,class FROM stuinf_A2242 " +
+               "where ethnic LIKE '"+aethnic+"'";
+         else if (sumstr.equals("出生日期"))
+           sqlquery =
+               "SELECT stu_id,name,birthday,class FROM stuinf_A2242 " +
+               "where birthday between "+range1+" and "+range2+
+               " order by birthday ASC";
+       }
+       else if (aclass.equals("A2243")) {
+         if (sumstr.equals("男"))
+           sqlquery =
+               "SELECT stu_id,name,sex,class FROM stuinf_A2242 " +
+               "where sex = '男' ";
+         else if (sumstr.equals("女"))
+           sqlquery =
+               "SELECT stu_id,name,sex,class FROM stuinf_A2242 " +
+               "where sex = '女' ";
+         else if (sumstr.equals("民族"))
+           sqlquery =
+               "SELECT stu_id,name,ethnic,class FROM stuinf_A2242 " +
+               "where ethnic LIKE '"+aethnic+"'";
+         else if (sumstr.equals("出生日期"))
+           sqlquery =
+               "SELECT stu_id,name,birthday,class FROM stuinf_A2242 " +
+               "where birthday between "+range1+" and "+range2+
+               " order by birthday ASC";
+       }
+     }
+     con = getConnection("Access");
+     ps = con.prepareStatement(sqlquery);
+     rs = ps.executeQuery();
+     while (rs.next()) {
+       resultdate.add(rs.getString("stu_id"));
+       resultdate.add(rs.getString("name"));
+       resultdate.addElement(rs.getString(3));
+       resultdate.add(rs.getString("class"));
+     }
+   }
+   catch (SQLException e) {
+     e.printStackTrace();
+   }
+   finally {
+     if (rs != null)try {
+       rs.close();
+     }
+     catch (SQLException ignore) {}
+     if (ps != null)try {
+       ps.close();
+     }
+     catch (SQLException ignore) {}
+     if (con != null)try {
+       con.close();
+     }
+     catch (SQLException ignore) {}
+     finally {
+       releaseConnection("Access", con);
+     }
+   }
+   return resultdate;
+ }
+
+//检验输入的班级号是否合法
+ public boolean checkClass(String aclass)
+ {
+   boolean checkflag =  true;
+   if(!aclass.equals("A2241")&&!aclass.equals("A2242")&&!aclass.equals("A2243"))
+     checkflag = false;
+   else checkflag = true;
+   return checkflag;
+ }
+
+ //检验输入的学号是否合法
+ public boolean checkStuid(String userid) {
+   boolean checkflag = true;
+   Pattern pattern;
+   pattern = Pattern.compile("[0-9]");
+   for (int i = 0; i < userid.length(); i++) {
+     String str = userid.substring(i, i + 1);
+     Matcher matcher = pattern.matcher(str);
+     if (!matcher.matches()) {
+       checkflag = false;
+       break;
+     }
+     else checkflag = true;
+   }
+ return checkflag;
+}
+
+  /*关闭所有连接*/
+  public synchronized void closeConns() {
+    Enumeration allPools = connPools.elements();
+    while (allPools.hasMoreElements()) {
+      DBConnPool pool = (DBConnPool) allPools.nextElement();
+      pool.closeConn();
+    }
+  }
+
+  /*创建连接池*/
+  private void createPools() {
+    for (int i = 0; i < poolnames.size(); i++) {
+      String poolname = poolnames.elementAt(i).toString();
+      String drivername = drivernames.elementAt(i).toString();
+      String dbid = dbids.elementAt(i).toString();
+      String username = usernames.elementAt(i).toString();
+      String passwd = passwds.elementAt(i).toString();
+      int maxconn = 0;
+      try {
+        maxconn = Integer.parseInt(maxconns.elementAt(i).toString());
+      }
+      catch (NumberFormatException e) {
+        e.printStackTrace();
+      }
+      DBConnPool pool = new DBConnPool(poolname, drivername, dbid, username,
+                                       passwd, maxconn);
+      connPools.put(poolname, pool);
+    }
+  }
+}
+
+

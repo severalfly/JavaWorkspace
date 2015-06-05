@@ -1,0 +1,172 @@
+package stumng;
+
+import javax.swing.*;
+import javax.swing.JOptionPane;
+import java.awt.*;
+import com.borland.jbcl.layout.*;
+import java.awt.event.*;
+//import java.util.Date;
+import java.sql.Date;
+import java.text.*;
+
+
+public class addinfFrame extends JFrame {
+  DBConnManager dbconnmanager = new DBConnManager();
+  XYLayout xYLayout1 = new XYLayout();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JLabel jLabel2 = new JLabel();
+  JLabel jLabel3 = new JLabel();
+  JTextField jTextField3 = new JTextField();
+  JLabel jLabel4 = new JLabel();
+  JTextField jTextField4 = new JTextField();
+  JLabel jLabel5 = new JLabel();
+  JTextField jTextField5 = new JTextField();
+  JLabel jLabel6 = new JLabel();
+  JFormattedTextField jTextField6 = new JFormattedTextField(DateFormat.getDateInstance());
+  JLabel jLabel7 = new JLabel();
+  JTextField jTextField7 = new JTextField();
+  JButton jButton1 = new JButton();
+
+  int astu_id;
+  String userid;
+  String aname;
+  int aclass;
+  String sclass;
+  String asex;
+  Date abirth_date;
+  String sbirth_date;
+  String anativeplace;
+  String anationality;
+  JButton jButton2 = new JButton();
+  JComboBox jComboBox1 = new JComboBox();
+
+  public addinfFrame() {
+    try {
+      jbInit();
+      this.setTitle("增加学生信息");
+      this.setSize(500,400);
+      this.setResizable(false);
+      this.setLocation(200,300);
+
+      jButton1.addActionListener(new ActionListener()
+     {
+       public void actionPerformed( ActionEvent event )
+      {
+        boolean flag;
+        userid = jTextField3.getText().trim();
+        if(userid.equals(""))
+        {
+          JOptionPane.showMessageDialog(null, "学号不能为空");
+        }
+        else
+        {
+          astu_id = Integer.parseInt(userid);
+          flag = dbconnmanager.userExist(astu_id);
+          if (flag == true) {
+            JOptionPane.showMessageDialog(null, "该学生已经存在");
+          }
+          else {
+            flag = addstuinf();
+            if (flag == true) {
+              JOptionPane.showMessageDialog(null, "添加成功");
+            }
+            else {
+              JOptionPane.showMessageDialog(null, "添加失败");
+            }
+          }
+        }
+      }
+    }
+     );
+     jButton2.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        jButton2_actionPerformed(e);
+      }
+    });
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("姓名");
+    this.getContentPane().setLayout(xYLayout1);
+    jLabel2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel2.setText("性别");
+    jLabel3.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel3.setText("学号");
+    jLabel4.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel4.setText("民族");
+    jLabel5.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel5.setText("班级");
+    jLabel6.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel6.setText("出生日期");
+    jLabel7.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel7.setText("籍贯");
+    jButton1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton1.setText("增加");
+    xYLayout1.setWidth(398);
+    xYLayout1.setHeight(300);
+    jTextField1.setText("");
+    jTextField4.setText("");
+    jTextField6.setText("");
+    jTextField5.setText("");
+    jTextField3.setEnabled(true);
+    jTextField3.setMinimumSize(new Dimension(11, 21));
+    jTextField3.setToolTipText("");
+    jTextField3.setText("");
+    jButton2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton2.setText("退出");
+    jComboBox1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jComboBox1.setRequestFocusEnabled(true);
+    jComboBox1.setToolTipText("");
+    jComboBox1.setVerifyInputWhenFocusTarget(true);
+    jComboBox1.addItem("男");
+    jComboBox1.addItem("女");
+    this.setFont(new java.awt.Font("Century Gothic", 0, 13));
+    this.setIconImage(null);
+    this.getContentPane().add(jLabel7,    new XYConstraints(95, 197, 51, 26));
+    this.getContentPane().add(jTextField7,   new XYConstraints(158, 198, 157, 25));
+    this.getContentPane().add(jTextField4,  new XYConstraints(296, 115, 70, 25));
+    this.getContentPane().add(jComboBox1, new XYConstraints(297, 64, 69, 29));
+    this.getContentPane().add(jLabel2, new XYConstraints(223, 64, 59, 30));
+    this.getContentPane().add(jTextField5, new XYConstraints(109, 155, 84, 27));
+    this.getContentPane().add(jTextField3,  new XYConstraints(108, 111, 86, 28));
+    this.getContentPane().add(jTextField1, new XYConstraints(109, 66, 85, 30));
+    this.getContentPane().add(jLabel5, new XYConstraints(53, 153, 38, 32));
+    this.getContentPane().add(jLabel3,  new XYConstraints(51, 108, 39, 38));
+    this.getContentPane().add(jLabel4, new XYConstraints(225, 110, 45, 27));
+    this.getContentPane().add(jLabel6, new XYConstraints(223, 154, 66, 23));
+    this.getContentPane().add(jTextField6,  new XYConstraints(298, 153, 68, 25));
+    this.getContentPane().add(jLabel1, new XYConstraints(51, 65, 43, 29));
+    this.getContentPane().add(jButton2, new XYConstraints(242, 240, 74, 31));
+    this.getContentPane().add(jButton1, new XYConstraints(140, 242, 69, 30));
+  }
+  private boolean addstuinf()
+  {
+    boolean flag;
+    aname =  jTextField1.getText();
+    asex =  (String)jComboBox1.getSelectedItem();
+    userid = jTextField3.getText().trim();
+    astu_id = Integer.parseInt(userid);
+    anationality =  jTextField4.getText();
+    sclass = jTextField5.getText().trim();
+    aclass = Integer.parseInt( sclass );
+    sbirth_date = jTextField6.getText();
+    abirth_date = Date.valueOf(sbirth_date);
+    anativeplace = jTextField7.getText();
+
+    flag = dbconnmanager.addUser(aname,astu_id,aclass,abirth_date,asex,anativeplace,anationality);
+    return flag;
+  }
+  void jButton2_actionPerformed(ActionEvent e)
+  {
+    this.dispose();
+  }
+
+}

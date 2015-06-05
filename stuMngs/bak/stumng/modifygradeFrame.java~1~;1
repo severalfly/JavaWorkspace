@@ -1,0 +1,62 @@
+package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+import com.borland.jbcl.layout.*;
+import java.awt.event.*;
+
+public class modifygradeFrame extends JFrame {
+  XYLayout xYLayout1 = new XYLayout();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JLabel jLabel2 = new JLabel();
+  JTextField jTextField2 = new JTextField();
+  JLabel jLabel3 = new JLabel();
+  JTextField jTextField3 = new JTextField();
+  JLabel jLabel4 = new JLabel();
+  JTextField jTextField4 = new JTextField();
+  JButton jButton1 = new JButton();
+
+  public modifygradeFrame() {
+    try {
+      jbInit();
+      this.setTitle("增加学生成绩");
+      this.setSize(500,300);
+      this.setResizable(false);
+      this.setLocation(200,300);
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("学号");
+    this.getContentPane().setLayout(xYLayout1);
+    jTextField1.setText("jTextField1");
+    jLabel2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel2.setText("数学");
+    jTextField2.setText("jTextField2");
+    jLabel3.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel3.setText("语文");
+    jTextField3.setText("jTextField3");
+    jLabel4.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel4.setText("英语");
+    jTextField4.setText("jTextField4");
+    jButton1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton1.setText("修改");
+    jButton1.addActionListener(new modifygradeFrame_jButton1_actionAdapter(this));
+    this.getContentPane().add(jLabel3,  new XYConstraints(245, 110, 38, 24));
+    this.getContentPane().add(jLabel1, new XYConstraints(74, 49, 68, 36));
+    this.getContentPane().add(jLabel2, new XYConstraints(73, 105, 60, 39));
+    this.getContentPane().add(jTextField2,    new XYConstraints(137, 110, 78, 29));
+    this.getContentPane().add(jTextField4,     new XYConstraints(137, 166, 79, 29));
+    this.getContentPane().add(jTextField3,   new XYConstraints(299, 109, 82, 30));
+    this.getContentPane().add(jTextField1,  new XYConstraints(139, 54, 77, 27));
+    this.getContentPane().add(jLabel4,  new XYConstraints(75, 167, 47, 30));
+    this.getContentPane().add(jButton1, new XYConstraints(160, 221, 100, 36));
+  }
+}
+

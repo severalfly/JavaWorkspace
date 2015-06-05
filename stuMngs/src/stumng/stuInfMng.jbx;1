@@ -1,0 +1,46 @@
+[PropertyInfo]
+addstuinf,addStuInf,false,false, , ,false,<default>
+addStuInfMenuItem,JMenuItem,false,false, , ,false,<default>
+borderLayout1,BorderLayout,false,false, , ,false,<default>
+chineserankMenuItem,JMenuItem,false,false, , ,false,<default>
+commentrankMenuItem,JMenuItem,false,false, , ,false,<default>
+delstuinf,delStuInf,false,false, , ,false,<default>
+delStuInfMenuItem,JMenuItem,false,false, , ,false,<default>
+editstuinf,editStuInf,false,false, , ,false,<default>
+editStuInfMenuItem,JMenuItem,false,false, , ,false,<default>
+englishrankMenuItem,JMenuItem,false,false, , ,false,<default>
+exitMenu,JMenu,false,false, , ,false,<default>
+exitsystemMenuItem,JMenuItem,false,false, , ,false,<default>
+gradeinfmng,gradeInfMng,false,false, , ,false,<default>
+gradeMngMenuItem,JMenuItem,false,false, , ,false,<default>
+gradequery,gradeQuery,false,false, , ,false,<default>
+gradeQueryMenuItem,JMenuItem,false,false, , ,false,<default>
+graderank,gradeRank,false,false, , ,false,<default>
+gradeRankMenuItem,JMenuItem,false,false, , ,false,<default>
+HelpMenu,JMenu,false,false, , ,false,<default>
+helpMenuItem,JMenuItem,false,false, , ,false,<default>
+jLabel1,JLabel,false,false, , ,false,<default>
+jMenuBar1,JMenuBar,false,false, , ,false,<default>
+mathrankMenuItem,JMenuItem,false,false, , ,false,<default>
+QueryMenu,JMenu,false,false, , ,false,<default>
+stuGradeMngMenu,JMenu,false,false, , ,false,<default>
+stuInfMngMenu,JMenu,false,false, , ,false,<default>
+stumngsabout,StuMngsAbout,false,false, , ,false,<default>
+stuqueryclass,stuQueryClass,false,false, , ,false,<default>
+stuQueryClassMenuItem,JMenuItem,false,false, , ,false,<default>
+stuqueryid,stuQueryId,false,false, , ,false,<default>
+stuQueryIdMenuItem,JMenuItem,false,false, , ,false,<default>
+stuQueryMenu,JMenu,false,false, , ,false,<default>
+stuqueryname,stuQueryName,false,false, , ,false,<default>
+stuQueryNameMenuItem,JMenuItem,false,false, , ,false,<default>
+sumgrade,sumGrade,false,false, , ,false,<default>
+sumGradeMenuItem,JMenuItem,false,false, , ,false,<default>
+sumMenu,JMenu,false,false, , ,false,<default>
+sumpeople,sumPeople,false,false, , ,false,<default>
+sumStuMenuItem,JMenuItem,false,false, , ,false,<default>
+totalrankMenuItem,JMenuItem,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

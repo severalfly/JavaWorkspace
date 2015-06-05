@@ -1,0 +1,15 @@
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+
+public class StuInfMng extends JFrame {
+	JPanel contentPanel;
+	AddStuInf addStuInf = new AddStuInf();
+	EditStuInf editStuInf = new EditStuInf();
+	DelStuInf delStuInf = new DelStuInf();
+	
+	GradeInfMng gradeInfMng = new GradeInfMng();
+	StuQueryId stuQueryId = new StuQueryId();
+	StuQueryName stuQueryName = new StuQueryName();
+	StuQueryClass stuQueryClass = new StuQueryClass();
+}

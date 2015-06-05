@@ -1,0 +1,6 @@
+package stumng;
+
+public class DBConnPool {
+  public DBConnPool() {
+  }
+}

@@ -1,0 +1,16 @@
+public class StuMngApp {
+	boolean packFrame = false;
+	
+	public StuMngApp() {
+		// TODO Auto-generated constructor stub
+		StulnfMng frame = new 
+	}
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

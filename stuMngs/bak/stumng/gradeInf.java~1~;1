@@ -1,0 +1,69 @@
+package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+import com.borland.jbcl.layout.*;
+
+public class grademngFrame extends JFrame {
+  XYLayout xYLayout1 = new XYLayout();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JLabel jLabel2 = new JLabel();
+  JTextField jTextField2 = new JTextField();
+  JLabel jLabel3 = new JLabel();
+  JTextField jTextField3 = new JTextField();
+  JLabel jLabel4 = new JLabel();
+  JTextField jTextField4 = new JTextField();
+  JButton jButton1 = new JButton();
+  JButton jButton2 = new JButton();
+  JLabel jLabel5 = new JLabel();
+  JTextField jTextField5 = new JTextField();
+
+  public grademngFrame() {
+    try {
+      jbInit();
+      this.setTitle("增加学生成绩");
+      this.setSize(500,300);
+      this.setResizable(false);
+      this.setLocation(200,300);
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("学号");
+    this.getContentPane().setLayout(xYLayout1);
+    jLabel2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel2.setText("数学");
+    jLabel3.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel3.setText("语文");
+    jLabel4.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel4.setText("英语");
+    jButton1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton1.setText("增加");
+    jButton2.setFont(new java.awt.Font("Dialog", 0, 13));
+    jButton2.setText("修改");
+    jLabel5.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel5.setText("总评");
+    jTextField1.setText("");
+    jTextField2.setText("");
+    jTextField4.setText("");
+    jTextField5.setText("");
+    this.getContentPane().add(jLabel3,  new XYConstraints(245, 110, 38, 24));
+    this.getContentPane().add(jLabel1, new XYConstraints(74, 49, 68, 36));
+    this.getContentPane().add(jLabel2, new XYConstraints(73, 105, 60, 39));
+    this.getContentPane().add(jTextField2,    new XYConstraints(137, 110, 78, 29));
+    this.getContentPane().add(jTextField4,     new XYConstraints(137, 166, 79, 29));
+    this.getContentPane().add(jTextField3,   new XYConstraints(299, 109, 82, 30));
+    this.getContentPane().add(jTextField1,  new XYConstraints(139, 54, 77, 27));
+    this.getContentPane().add(jLabel4,  new XYConstraints(75, 167, 47, 30));
+    this.getContentPane().add(jButton1,   new XYConstraints(93, 216, 100, 36));
+    this.getContentPane().add(jButton2,  new XYConstraints(214, 217, 95, 38));
+    this.getContentPane().add(jLabel5,  new XYConstraints(240, 167, 53, 27));
+    this.getContentPane().add(jTextField5,  new XYConstraints(300, 165, 80, 33));
+  }
+}

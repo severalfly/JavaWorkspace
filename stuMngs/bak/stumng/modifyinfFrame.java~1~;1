@@ -1,0 +1,21 @@
+package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class modifyinfFrame extends JFrame {
+  BorderLayout borderLayout1 = new BorderLayout();
+
+  public modifyinfFrame() {
+    try {
+      jbInit();
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    this.getContentPane().setLayout(borderLayout1);
+  }
+}

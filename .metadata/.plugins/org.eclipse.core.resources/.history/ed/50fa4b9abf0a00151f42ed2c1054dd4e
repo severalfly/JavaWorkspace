@@ -1,0 +1,9 @@
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+
+public class StulnfMng extends JFrame {
+	JPanel contentPanel;
+	AddStuInf addStuInf = new AddStuInf();
+
+}

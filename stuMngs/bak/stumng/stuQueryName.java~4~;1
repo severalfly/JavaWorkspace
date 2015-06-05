@@ -1,0 +1,57 @@
+package stumng;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class stuQueryName extends JFrame {
+  BorderLayout borderLayout1 = new BorderLayout();
+  JPanel jPanel1 = new JPanel();
+  JLabel jLabel1 = new JLabel();
+  JTextField jTextField1 = new JTextField();
+  JScrollPane jScrollPane1 = new JScrollPane();
+  JTable jTable1 = new JTable();
+  JComboBox jComboBox1 = new JComboBox();
+
+  public stuQueryName() {
+    try {
+      jbInit();
+      //设置frame的大小
+      this.setSize(600, 400);
+      //得到当前屏幕大小
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      //得到frame的大小
+      Dimension frameSize = this.getSize();
+      if (frameSize.height > screenSize.height) {
+        frameSize.height = screenSize.height;
+      }
+      if (frameSize.width > screenSize.width) {
+        frameSize.width = screenSize.width;
+      }
+      this.setTitle("查询学生信息");
+      //设置frame在屏幕上显示的位置
+      this.setLocation( (screenSize.width - frameSize.width) / 2,
+                       (screenSize.height - frameSize.height) / 2);
+
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  void jbInit() throws Exception {
+    this.getContentPane().setLayout(borderLayout1);
+    jLabel1.setFont(new java.awt.Font("Dialog", 0, 13));
+    jLabel1.setText("请输入姓名");
+    jTextField1.setOpaque(false);
+    jTextField1.setPreferredSize(new Dimension(100, 21));
+    jTextField1.setSelectionStart(21);
+    jTextField1.setText("");
+    this.getContentPane().add(jPanel1, BorderLayout.NORTH);
+    jPanel1.add(jLabel1, null);
+    jPanel1.add(jTextField1, null);
+    jPanel1.add(jComboBox1, null);
+    this.getContentPane().add(jScrollPane1, BorderLayout.CENTER);
+    jScrollPane1.getViewport().add(jTable1, null);
+  }
+}

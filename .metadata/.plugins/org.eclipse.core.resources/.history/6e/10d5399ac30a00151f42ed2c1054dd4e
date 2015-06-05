@@ -1,0 +1,46 @@
+import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+
+
+public class StuInfMng extends JFrame {
+	JPanel contentPanel;
+	AddStuInf addStuInf = new AddStuInf();
+	EditStuInf editStuInf = new EditStuInf();
+	DelStuInf delStuInf = new DelStuInf();
+	
+	GradeInfMng gradeInfMng = new GradeInfMng();
+	StuQueryId stuQueryId = new StuQueryId();
+	StuQueryName stuQueryName = new StuQueryName();
+	StuQueryClass stuQueryClass = new StuQueryClass();
+	
+	GradeRank gradeRank = new GradeRank();
+	GradeQuery gradeQuery = new GradeQuery();
+	
+	SumGrade sumGrade = new SumGrade();
+	SumPeople sumPeople = new SumPeople();
+	StuMngsAbout stuMngsAbout = new StuMngsAbout();
+	JMenuBar jMenuBar1 = new JMenuBar();
+	JMenu stuInfMngJMenu = new JMenu();
+	JMenuItem addStuInfMenuItem = new JMenuItem();
+	
+	JMenu stuGradeMngMenu = new JMenu();
+	JMenuItem gradeMngMenuItem = new JMenuItem();
+	
+	BorderLayout borderLayout1 = new BorderLayout();
+	JMenu queryMenu = new JMenu();
+	JMenu sumMenu = new JMenu();
+	JMenu helpMenu = new JMenu();
+	JMenu exitMenu = new JMenu();
+	JMenuItem editStuInfMenuItem = new JMenuItem();
+	JMenuItem delStuInfMenuItem = new JMenuItem();
+	JMenuItem gradeQueryMenuItem = new JMenuItem();
+	
+	JMenuItem sumStuMenuItem = new JMenuItem();
+	JMenuItem sumGradeMenuItem = new JMenuItem();
+	
+}
