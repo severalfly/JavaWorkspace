@@ -219,6 +219,19 @@ public class StuInfMng extends JFrame {
 		helpMenu.setFont(new java.awt.Font("Dialog",0,13));
 		helpMenu.setText("帮助");
 		
+		exitMenu.setFont(new java.awt.Font("Dialog",0,13));
+		exitMenu.setText("退出");
+		editStuInfMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		editStuInfMenuItem.setText("修改学生信息");
+		delStuInfMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		delStuInfMenuItem.setText("删除学生信息");
+		
+		gradeQueryMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		gradeQueryMenuItem.setActionCommand("学生成绩查询");
+		gradeQueryMenuItem.setText("成绩查夜");
+		
+		sumStuMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		
 	}
 	
 	
