@@ -12,6 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 
 public class StuInfMng extends JFrame {
@@ -50,7 +51,7 @@ public class StuInfMng extends JFrame {
 	JMenuItem sumStuMenuItem = new JMenuItem();
 	JMenuItem sumGradeMenuItem = new JMenuItem();
 	JMenuItem helpMenuItem = new JMenuItem();
-	JMenu strQueryMenu = new JMenu();
+	JMenu stuQueryMenu = new JMenu();
 	JMenuItem stuQueryNameMenuItem = new JMenuItem();
 	JMenuItem stuQueryIdMenuItem = new JMenuItem();
 	JMenuItem stuQueryClassMenuItem = new JMenuItem();
@@ -231,6 +232,86 @@ public class StuInfMng extends JFrame {
 		gradeQueryMenuItem.setText("成绩查夜");
 		
 		sumStuMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		sumStuMenuItem.setText("人员统计");
+		sumGradeMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		sumGradeMenuItem.setText("成绩统计");
+		
+		helpMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		helpMenuItem.setText("关于");
+		
+		stuQueryMenu.setFont(new java.awt.Font("Dialog",0,13));
+		stuQueryMenu.setActionCommand("");
+		stuQueryMenu.setText("学生基本信息查询");
+		
+		stuQueryNameMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		stuQueryNameMenuItem.setText("按姓名");
+		
+		stuQueryIdMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		stuQueryIdMenuItem.setText("按学号");
+		stuInfMngJMenu.addSeparator();
+		
+		stuQueryClassMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		stuQueryClassMenuItem.setText("按班级");
+		
+		exitsystemMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		exitsystemMenuItem.setText("退出系统");
+		
+		totalrankMenuItem.setText("按总分");
+		mathrankMenuItem.setText("按数学成绩");
+		englishrankMenuItem.setText("按英语成绩");
+		chineseRankMenuItem.setText("按语文成绩");
+		commentrankMenuItem.setText("按总成绩");
+		
+		gradeRankMenuItem.setFont(new java.awt.Font("Dialog",0,13));
+		gradeRankMenuItem.setText("排名");
+		
+		contentPanel.setFont(new java.awt.Font("Dialog",0,11));
+		jLabel1.setFont(new java.awt.Font("Dialog",1,25));
+		jLabel1.setForeground(Color.red);
+		jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+		jLabel1.setHorizontalTextPosition(SwingConstants.CENTER);
+		jLabel1.setText("欢迎进入学生管理系统");
+		
+		stuInfMngJMenu.add(addStuInfMenuItem);
+		stuInfMngJMenu.addSeparator();
+		stuInfMngJMenu.add(editStuInfMenuItem);
+		stuInfMngJMenu.addSeparator();
+		stuInfMngJMenu.add(delStuInfMenuItem);
+		
+		stuGradeMngMenu.addSeparator();
+		stuGradeMngMenu.add(gradeMngMenuItem);
+		stuGradeMngMenu.addSeparator();
+		stuGradeMngMenu.add(gradeRankMenuItem);
+		
+		jMenuBar1.add(stuInfMngJMenu);
+		jMenuBar1.add(stuGradeMngMenu);
+		jMenuBar1.add(queryMenu);
+		jMenuBar1.add(sumMenu);
+		jMenuBar1.add(helpMenu);
+		jMenuBar1.add(exitMenu);
+		
+		queryMenu.addSeparator();
+		queryMenu.add(stuQueryMenu);
+		queryMenu.addSeparator();
+		queryMenu.add(gradeQueryMenuItem);
+		
+		sumMenu.addSeparator();
+		sumMenu.add(sumStuMenuItem);
+		sumMenu.addSeparator();
+		sumMenu.add(sumGradeMenuItem);
+		
+		helpMenu.addSeparator();
+		helpMenu.add(helpMenuItem);
+		
+		stuQueryMenu.add(stuQueryNameMenuItem);
+		stuQueryMenu.addSeparator();
+		stuQueryMenu.add(stuQueryIdMenuItem);
+		stuQueryMenu.addSeparator();
+		stuQueryMenu.add(stuQueryClassMenuItem);
+		
+		exitMenu.add(exitsystemMenuItem);
+		contentPanel.add(jLabel1,BorderLayout.CENTER);
+		this.setJMenuBar(jMenuBar1);
 		
 	}
 	
